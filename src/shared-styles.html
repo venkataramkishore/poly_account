@@ -1,0 +1,215 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<!-- shared styles for all views -->
+<dom-module id="shared-styles">
+  <template>
+    <style>
+      .row {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        width: 100%;
+      }
+
+      [class*="col-"] {
+        -webkit-box-flex: 1;
+        -webkit-flex: 1 0 auto;
+        -ms-flex: 1 0 auto;
+        flex: 1 0 auto;
+      }
+
+      .col-1 {
+        max-width: 8.333333333333333%;
+      }
+
+      .col-2 {
+        max-width: 16.666666666666667%;
+      }
+
+      .col-3 {
+        max-width: 25%;
+      }
+
+      .col-4 {
+        max-width: 33.333333333333333%;
+      }
+
+      .col-5 {
+        max-width: 41.666666666666667%;
+      }
+
+      .col-6 {
+        max-width: 50%;
+      }
+
+      .col-7 {
+        max-width: 58.333333333333333%;
+      }
+
+      .col-8 {
+        max-width: 66.666666666666667%;
+      }
+
+      .col-9 {
+        max-width: 75%;
+      }
+
+      .col-10 {
+        max-width: 83.333333333333333%;
+      }
+
+      .col-11 {
+        max-width: 91.666666666666667%;
+      }
+
+      .col-12 {
+        max-width: 100%;
+      }
+
+      .offset-l-1 {
+        margin-left: 8.333333333333333%;
+      }
+
+      .offset-l-2 {
+        margin-left: 16.66666666666666%;
+      }
+
+      .offset-l-3 {
+        margin-left: 25%;
+      }
+
+      .offset-r-1 {
+        margin-left: 8.333333333333333%;
+      }
+
+      @media only screen and (max-device-width: 480px) {
+        .row {
+          -webkit-box-direction: column;
+          -ms-flex-direction: column;
+          flex-direction: column;
+        }
+        .col-xs-hidden {
+          display: none;
+        }
+        .col-xs-1 {
+          max-width: 8.333333333333333%;
+        }
+        .col-xs-2 {
+          max-width: 16.666666666666667%;
+        }
+        .col-xs-3 {
+          max-width: 25%;
+        }
+        .col-xs-4 {
+          max-width: 33.333333333333333%;
+        }
+        .col-xs-5 {
+          max-width: 41.666666666666667%;
+        }
+        .col-xs-6 {
+          max-width: 50%;
+        }
+        .col-xs-7 {
+          max-width: 58.333333333333333%;
+        }
+        .col-xs-8 {
+          max-width: 66.666666666666667%;
+        }
+        .col-xs-9 {
+          max-width: 75%;
+        }
+        .col-xs-10 {
+          max-width: 83.333333333333333%;
+        }
+        .col-xs-11 {
+          max-width: 91.666666666666667%;
+        }
+        .col-xs-12 {
+          -webkit-box-flex: 0;
+          -ms-flex: 0 0 100%;
+          max-width: 100%;
+        }
+
+        .offset-l-1,
+        .offset-l-2,
+        .offset-l-3,
+        .offset-r-1 {
+          margin-left: 0;
+        }
+
+      }
+
+      @media only screen and 
+      (min-device-width: 481px) and 
+      (max-device-width: 768px) {
+        .col-md-hidden{
+          display: none;
+        }
+      }
+
+      @media only screen and 
+      (min-device-width: 769px) and
+      (max-device-width: 1024px) {
+        .col-lg-hidden {
+          display: none;
+        }
+      }
+
+      @media only screen and (min-device-width: 1025px) {
+        .col-xl-hidden {
+          display: none;
+        }
+      }
+
+      .card {
+        margin: 24px;
+        padding: 16px;
+        color: #757575;
+        border-radius: 5px;
+        background-color: #fff;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
+
+      .hide {
+        display: none;
+      }
+
+      .show {
+        display: flex;
+      }
+
+      .euro::before {
+        content: "\20AC";
+      }
+
+      .dollar::after {
+        content: "\0024";
+      }
+
+      .red {
+        color: red;
+      }
+
+      .green {
+        color: green;
+      }
+
+      h1 {
+        margin: 16px 0;
+        color: #212121;
+        font-size: 22px;
+      }
+    </style>
+  </template>
+</dom-module>

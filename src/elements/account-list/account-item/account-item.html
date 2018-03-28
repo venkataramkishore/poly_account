@@ -1,0 +1,156 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../../shared-styles.html">
+
+<dom-module id="account-item">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        border: 1px solid grey;
+      }
+     
+      paper-item, paper-item-body {
+        padding: 5px;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    </style>
+    <paper-item role="menuitem" >
+      <paper-item-body>
+        <div>
+            <div>[[ iban ]]</div>
+            <div>[[ name ]]</div>
+        </div>
+        <span class$="{{_amountColor}} {{_showCurrency}}"> [[ amount ]]</span>
+      </paper-item-body>
+    </paper-item>
+  </template>
+
+  <script>
+    /**
+     * `account-item` Description
+     *
+     * @summary ShortDescription.
+     * @customElement
+     * @polymer
+     * @extends {Polymer.Element}
+     */
+    class AccountItem extends Polymer.Element {
+      /**
+       * String providing the tag name to register the element under.
+       */
+      static get is() {
+        return 'account-item';
+      }
+
+      /**
+       * Object describing property-related metadata used by Polymer features
+       */
+      static get properties() {
+        return {
+          accId: {
+            type: String,
+            value: ''
+          },
+          /**
+           * Description for prop
+           */
+          iban: {
+            type: String,
+            value: ''
+          },
+          /**
+           * Description for prop
+           */
+          name: {
+            type: String,
+            value: '',
+          },
+          /**
+           * Description for prop
+           */
+          amount: {
+            type: Number,
+            value: 0.0,
+            observer: '_renderAmountWithColor'
+          },
+          /**
+           * Description for prop
+           */
+          currency: {
+            type: String,
+            value: 'EUR',
+            observer: '_renderCurrencyAsHTML'
+          },
+          /**
+           * Description for jointAccount
+           */
+           jointAccount: {
+            type: Array,
+            value: function() {
+              return []
+            },
+            observer: '_handleJointAccountNames'
+          },
+          /**
+           * Description for prop
+           */
+          _showCurrency: String,
+          /**
+           * Description for prop
+           */
+          _amountColor: String,
+        };
+      }
+
+      _renderCurrencyAsHTML(newCcy, oldCCy) {
+        if (newCcy === 'USD') {
+          this.set('_showCurrency', 'dollar');
+        } else {
+          this.set('_showCurrency', 'euro');
+        }
+      }
+
+      _renderAmountWithColor(newAmount, oldAmount) {
+        if (newAmount < 0) {
+          return this.set('_amountColor', 'red');
+        }
+        this.set('_amountColor', 'green');
+      }
+
+    _handleJointAccountNames(newAccounts, oldAccounts) {
+      if(Array.isArray(newAccounts) && newAccounts.length > 0 ) {
+        const names = newAccounts.reduce(function(previousValue, currentValue){
+          return currentValue.name;
+        }, '');
+        this.set('name', this.name + '('+ names+')');
+      }
+    }
+      /**
+       * Instance of the element is created/upgraded. Use: initializing state,
+       * set up event listeners, create shadow dom.
+       * @constructor
+       */
+      constructor() {
+        super();
+      }
+
+      /**
+       * Use for one-time configuration of your component after local DOM is initialized. 
+       */
+      ready() {
+        super.ready();
+
+        Polymer.RenderStatus.afterNextRender(this, function () {
+
+        });
+        // this.$.acctItem.addEventListener('click', this._handleAccountSelection);
+      }
+
+    }
+
+    window.customElements.define(AccountItem.is, AccountItem);
+  </script>
+</dom-module>

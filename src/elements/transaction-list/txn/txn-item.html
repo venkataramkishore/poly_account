@@ -1,0 +1,210 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../../bower_components/iron-time/iron-time.html">
+<link rel="import" href="../../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../../shared-styles.html">
+
+<dom-module id="txn-item">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        border: 1px solid brown;
+      }
+
+      paper-item {
+        width: 95%;
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .details {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-around;
+        box-sizing: border-box;
+      }
+
+      .display-pic {
+        margin-right: 10px;
+      }
+
+      .header {
+        display: inherit;
+        width: 100%;
+        flex-direction: inherit;
+        justify-content: space-between;
+      }
+
+      google-map {
+        margin: 10px;
+        width: 100%;
+        height: auto;
+      }
+    </style>
+    <paper-item on-click="_handleTxnSelection">
+      <div class="row">
+        <div class="col-2 col-xs-4">
+          <img src="[[picture]]" alt="[[name]]">
+        </div>
+        <div class="col-4 col-xs-4">[[name]]</div>
+        <div class="col-4 col-xs-4">
+          <iron-time datetime="[[ when ]]" format="m/dd/yy"></iron-time>
+        </div>
+        <div class="col-3 col-xs-4">
+          <template is="dom-if" if="{{_showAmount}}">
+            <div class$="{{_renderAmountWithColor(amount)}}">&euro; [[ amount ]]</div>
+          </template>
+        </div>
+      </div>
+    </paper-item>
+    <paper-item-body class$="details {{_showOrHide}}">
+      <div class="row">
+        <div class="col-6 col-xs-12 col-md-hidden col-lg-hidden col-xl-hidden">
+          <google-map latitude="[[ latitude ]]" longitude="[[ longitude ]]" api-key="AIzaSyDcP9WRK3XDMLrg9vyn9VyS2Imz_BIagxo"></google-map>
+        </div>
+        <div class="col-4 col-xs-8 col-md-hidden col-lg-hidden col-xl-hidden">[[address]]</div>
+        <div class$="{{_renderAmountWithColor(amount)}} col-2 col-xs-4 col-md-hidden col-lg-hidden col-xl-hidden">&euro; [[ amount ]]</div>
+      </div>
+    </paper-item-body>
+  </template>
+
+  <script>
+    /**
+     * `txn-item` Description
+     *
+     * @summary ShortDescription.
+     * @customElement
+     * @polymer
+     * @extends {Polymer.Element}
+     */
+    class TranactionItem extends Polymer.Element {
+      /**
+       * String providing the tag name to register the element under.
+       */
+      static get is() {
+        return 'txn-item';
+      }
+
+      /**
+       * Object describing property-related metadata used by Polymer features
+       */
+      static get properties() {
+        return {
+          txnId: {
+            type: String
+          },
+          name: {
+            type: String,
+            value: ''
+          },
+          /**
+             * "when" txn happened
+             */
+          when: {
+            type: Date,
+            value: new Date()
+          },
+          /**
+           *Amount of txn 
+           */
+          amount: {
+            type: Number,
+            value: 0.0
+          },
+          /**
+           * Description for prop
+           */
+          showDetails: {
+            type: String,
+            value: null,
+            observer: '_updateShowOrHide'
+          },
+          /**
+           * Description for prop
+           */
+          address: {
+            type: String
+          },
+          /**
+           * Description for prop
+           */
+          latitude: {
+            type: Number
+          },
+          /**
+           * Description for prop
+           */
+          longitude: {
+            type: Number
+          },
+          /**
+           * Description for prop
+           */
+          picture: {
+            type: String
+          },
+          /**
+           * Description for prop
+           */
+          _showOrHide: {
+            type: String,
+            value: 'hide',
+            default: 'hide'
+          },
+          /**
+           * Description for prop
+           */
+          _showAmount: {
+            type: Boolean,
+            value: true
+          },
+        };
+      }
+
+      /**
+       * Instance of the element is created/upgraded. Use: initializing state,
+       * set up event listeners, create shadow dom.
+       * @constructor
+       */
+      constructor() {
+        super();
+      }
+
+      _handleTxnSelection(event) {
+        this.dispatchEvent(new CustomEvent('txn-item-collapsed-pressed', {
+          bubbles: true,
+          composed: true,
+          detail: {
+            id: this.txnId
+          }
+        }));
+      }
+
+      _renderAmountWithColor(amount) {
+        return amount < 0 ? 'red' : 'green';
+      }
+
+      _updateShowOrHide(newValue, oldValue) {
+        this.set('_showOrHide', newValue === this.txnId ? 'show' : 'hide');
+        this.set('_showAmount', !(newValue === this.txnId));
+      }
+
+      /**
+       * Use for one-time configuration of your component after local DOM is initialized. 
+       */
+      ready() {
+        super.ready();
+
+        Polymer.RenderStatus.afterNextRender(this, function () {
+
+        });
+      }
+
+    }
+
+    window.customElements.define(TranactionItem.is, TranactionItem);
+  </script>
+</dom-module>

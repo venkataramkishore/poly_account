@@ -1,0 +1,109 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="./txn/txn-item.html">
+<dom-module id="transaction-list">
+  <template>
+
+    <iron-ajax auto url="{{ url }}" handle-as="json" last-response="{{ _transactions }}" debounce-duration="300"></iron-ajax>
+
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <paper-listbox attr-for-selected="selected-transaction" selected="{{selectedTransaction}}">
+      <template is="dom-repeat" items="{{_transactions}}" as="txn">
+        <txn-item selected-transaction="[[txn]]" txn-id="{{txn.id}}" name="{{txn.company}}" when="{{txn.date}}" amount="{{txn.amount}}"
+          address="{{txn.address}}" picture="{{txn.picture}}" longitude="{{txn.longitude}}" latitude="{{txn.latitude}}" show-details="{{itemIndexToShowOrHide}}"></txn-item>
+      </template>
+    </paper-listbox>
+
+  </template>
+  <script>
+
+    /**
+     * `TransactionList` Description
+     *
+     * @summary ShortDescription.
+     * @customElement
+     * @polymer
+     * @extends {Polymer.Element}
+     */
+    class TransactionList extends Polymer.Element {
+      /**
+       * String providing the tag name to register the element under.
+       */
+      static get is() {
+        return 'transaction-list';
+      }
+
+      /**
+       * Object describing property-related metadata used by Polymer features
+       */
+      static get properties() {
+        return {
+          url: {
+            type: String,
+            value: ''
+          },
+          _transactions: {
+            type: Array,
+            value: function () {
+              return [];
+            }
+          },
+          itemIndexToShowOrHide: {
+            type: Number,
+            value: 0
+          },
+          selectedTransaction: {
+            type: Object,
+            value: function () {
+              return {};
+            },
+            observer: '_onSelectedItem'
+          }
+        };
+      }
+
+      _onSelectedItem(newItem, oldItem) {
+        if (newItem) {
+          this.dispatchEvent(new CustomEvent('transaction-item-selected', {
+            bubbles: true,
+            composed: true,
+            detail: {
+              item: newItem
+            }
+          }));
+        }
+      }
+
+      _handleShowOrHide(event) {
+        this.set('itemIndexToShowOrHide', event.detail.id);
+      }
+
+      /**
+       * Instance of the element is created/upgraded. Use: initializing state,
+       * set up event listeners, create shadow dom.
+       * @constructor
+       */
+      constructor() {
+        super();
+      }
+
+      /**
+       * Use for one-time configuration of your component after local DOM is initialized. 
+       */
+      ready() {
+        super.ready();
+
+        Polymer.RenderStatus.afterNextRender(this, function () {
+        });
+        this.addEventListener('txn-item-collapsed-pressed', this._handleShowOrHide);
+      }
+    }
+
+    window.customElements.define(TransactionList.is, TransactionList);
+  </script>
+</dom-module>

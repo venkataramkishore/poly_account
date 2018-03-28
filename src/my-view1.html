@@ -1,0 +1,113 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../bower_components/neon-animation/web-animations.html">
+<link rel="import" href="./elements/transaction-list/transaction-list.html">
+<link rel="import" href="./elements/account-list/account-list.html">
+<link rel="import" href="./elements/transaction-list/txn-details/txn-details.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-view1">
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+      transaction-list, txn-details {
+        padding: 5px;
+        box-sizing: border-box;
+      }
+    </style>
+
+    <div class="card">
+      <h1>Select Account:</h1>
+      <account-list url="https://api.myjson.com/bins/uoze3"></account-list>
+    </div>
+    <div class="card">
+      <h1>Transaction details:</h1>
+      <div class="row">
+        <div class="col-6 col-xs-12">
+            <transaction-list url="{{ _transactionListUrl }}"></transaction-list>
+        </div>
+        <div class="col-6 col-xs-hidden">
+          <txn-details 
+            txn-id="{{selectedTxn.id}}"
+            name="{{selectedTxn.company}}" when="{{selectedTxn.date}}" amount="{{selectedTxn.amount}}" 
+            address="{{selectedTxn.address}}"
+            picture="{{selectedTxn.picture}}"
+            longitude="{{selectedTxn.longitude}}"
+            latitude="{{selectedTxn.latitude}}"></txn-details>
+        </div>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    class MyView1 extends Polymer.Element {
+      static get is() { return 'my-view1'; }
+      /**
+        * Object describing property-related metadata used by Polymer features
+        */
+      static get properties() {
+        return {
+          accounts: {
+            type: Object,
+            value: function () {
+              return [];
+            }
+          },
+          _transactionListUrl: {
+            type: String
+          },
+          selectedTxn: {
+            type: Object,
+            value :  function () {
+              return {};
+            }
+          }
+        };
+      }
+
+
+      _handleAccountSelection(event) {
+        this.set('_transactionListUrl', `https://api.myjson.com/bins/${event.detail.accountId}`);
+      }
+
+      _handleSelectedTransaction(event) {
+        this.set('selectedTxn', event.detail.item);
+      }
+
+      /**
+       * Use for one-time configuration of your component after local DOM is
+       * initialized.
+       */
+      ready() {
+        super.ready();
+
+        // When possible, use afterNextRender to defer non-critical
+        // work until after first paint.
+        Polymer.RenderStatus.afterNextRender(this, function () {
+
+        });
+        this.addEventListener('account-item-selected', this._handleAccountSelection);
+        this.addEventListener('transaction-item-selected', this._handleSelectedTransaction);
+      }
+    }
+
+    window.customElements.define(MyView1.is, MyView1);
+  </script>
+</dom-module>

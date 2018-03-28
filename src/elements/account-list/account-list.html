@@ -1,0 +1,103 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="./account-item/account-item.html">
+
+<dom-module id="account-list">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      paper-dropdown-menu {
+        width: 100%;
+      }
+    </style>
+    <iron-ajax id="accountListAjax" url="{{ url }}" handle-as="json" last-response="{{ _accounts }}" debounce-duration="300"></iron-ajax>
+    <paper-dropdown-menu label="Select Account" id="accountDropDown" >
+      <paper-listbox  attr-for-select="selected-account" slot="dropdown-content" selected="{{selectedAccount}}">
+        <template is="dom-repeat" items="{{ _accounts }}" as="acct">
+          <account-item selected-account="[[acct]]" iban="[[acct.iban]]" name="[[acct.name]]" amount="[[acct.balance]]" currency="EUR" joint-account="[[acct.jointAccount]]"
+            acc-id="[[acct.id]]">[[acct.iban]]</account-item>
+        </template>
+      </paper-listbox>
+    </paper-dropdown-menu>
+  </template>
+
+  <script>
+    /**
+     * `account-list` Description
+     *
+     * @summary ShortDescription.
+     * @customElement
+     * @polymer
+     * @extends {Polymer.Element}
+     */
+    class AccountList extends Polymer.Element {
+      /**
+       * String providing the tag name to register the element under.
+       */
+      static get is() {
+        return 'account-list';
+      }
+
+      /**
+       * Object describing property-related metadata used by Polymer features
+       */
+      static get properties() {
+        return {
+          url: String,
+          _accounts: {
+            type: Object,
+            value: function () {
+              return [];
+            }
+          },
+          selectedAccount: {
+            type: Object,
+            value: function () {
+              return {};
+            },
+            observer: '_handleSelectedAccount'
+          }
+        };
+      }
+
+      /**
+       * Instance of the element is created/upgraded. Use: initializing state,
+       * set up event listeners, create shadow dom.
+       * @constructor
+       */
+      constructor() {
+        super();
+      }
+
+      /**
+       * Use for one-time configuration of your component after local DOM is initialized. 
+       */
+      ready() {
+        super.ready();
+        Polymer.RenderStatus.afterNextRender(this, function () {
+
+        });
+        this.$.accountListAjax.generateRequest();
+      }
+
+      _handleSelectedAccount(selectedAccount, oldAccount) {
+        if(Number.isInteger(selectedAccount)) {
+          this.$.accountDropDown.label = this._accounts[selectedAccount].name;
+          this.dispatchEvent(new CustomEvent('account-item-selected', {
+              bubbles: true,
+              composed: true,
+              detail: {
+                accountId: this._accounts[selectedAccount].id
+              }
+          }));
+        } 
+      }
+    }
+
+    window.customElements.define(AccountList.is, AccountList);
+  </script>
+</dom-module>

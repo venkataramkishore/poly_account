@@ -18,7 +18,7 @@
     <paper-dropdown-menu label="Select Account" id="accountDropDown" >
       <paper-listbox  attr-for-select="selected-account" slot="dropdown-content" selected="{{selectedAccount}}">
         <template is="dom-repeat" items="{{ _accounts }}" as="acct">
-          <account-item selected-account="[[acct]]" iban="[[acct.iban]]" name="[[acct.name]]" amount="[[acct.balance]]" currency="EUR" joint-account="[[acct.jointAccount]]"
+          <account-item selected-account="[[acct]]" iban="[[acct.iban]]" name="[[acct.name]]" amount="[[acct.balance]]" currency="USD" joint-account="[[acct.jointAccount]]"
             acc-id="[[acct.id]]">[[acct.iban]]</account-item>
         </template>
       </paper-listbox>

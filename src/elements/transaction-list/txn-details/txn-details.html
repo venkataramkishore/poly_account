@@ -1,24 +1,20 @@
 <link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../../../bower_components/iron-time/iron-time.html">
 <link rel="import" href="../../../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../../../bower_components/google-map/google-map-marker.html">
 <link rel="import" href="../../../shared-styles.html">
 <dom-module id="txn-details">
   <template>
     <style include="shared-styles">
       :host {
         display: block;
-      }
-
-      .field {
-        flex: 1;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
+        border: 1px solid lightgrey;
       }
 
       google-map {
+        display: inline-block;
         width: 100%;
-        height: auto;
+        height: 300px;
       }
     </style>
     <template is="dom-if" if="{{txnId}}">
@@ -46,15 +42,18 @@
       <hr/>
       <div class="row">
         <div class="col-12">
-          <h3>Map Location:</h3>
-          <google-map latitude="[[ latitude ]]" longitude="[[ longitude ]]" api-key="AIzaSyDcP9WRK3XDMLrg9vyn9VyS2Imz_BIagxo"></google-map>
+          <!-- <google-map latitude="[[ latitude ]]" longitude="[[ longitude ]]" api-key="AIzaSyBxHWJTxJ8dnpIJl9Sb-cLNiMYp7-_EA2E"></google-map> -->
+          <google-map fit-to-markers api-key="AIzaSyBxHWJTxJ8dnpIJl9Sb-cLNiMYp7-_EA2E">
+              <google-map-marker latitude="[[ latitude ]]" longitude="[[ longitude ]]" draggable="true"></google-map-marker>
+            </google-map>
         </div>
       </div>
       <hr/>
       <div class="row">
         <div class="col-12">
           <h3>Address:</h3>
-          <div class="address">[[address]]</div>
+          <div>[[address]]</div>
+          <div>[[latitude]], [[longitude]]</div>
         </div>
       </div>
     </template>

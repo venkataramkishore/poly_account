@@ -13,60 +13,42 @@
         border: 1px solid brown;
       }
 
-      paper-item {
-        width: 95%;
-        display: inline-flex;
-        flex-direction: row;
-        align-items: center;
-      }
-
-      .details {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-around;
-        box-sizing: border-box;
-      }
-
       .display-pic {
         margin-right: 10px;
       }
 
-      .header {
-        display: inherit;
-        width: 100%;
-        flex-direction: inherit;
-        justify-content: space-between;
-      }
-
       google-map {
-        margin: 10px;
         width: 100%;
-        height: auto;
+        height: 100px;
       }
     </style>
     <paper-item on-click="_handleTxnSelection">
       <div class="row">
-        <div class="col-2 col-xs-4">
+        <div class="col-2 col-xs-2">
           <img src="[[picture]]" alt="[[name]]">
         </div>
-        <div class="col-4 col-xs-4">[[name]]</div>
-        <div class="col-4 col-xs-4">
+        <div class="col-4 col-xs-3">[[name]]</div>
+        <div class="col-4 col-xs-3">
           <iron-time datetime="[[ when ]]" format="m/dd/yy"></iron-time>
         </div>
-        <div class="col-3 col-xs-4">
+        <div class="col-3 col-xs-1">
           <template is="dom-if" if="{{_showAmount}}">
             <div class$="{{_renderAmountWithColor(amount)}}">&euro; [[ amount ]]</div>
           </template>
         </div>
       </div>
     </paper-item>
-    <paper-item-body class$="details {{_showOrHide}}">
+    <paper-item-body class$="{{_showOrHide}}">
       <div class="row">
         <div class="col-6 col-xs-12 col-md-hidden col-lg-hidden col-xl-hidden">
-          <google-map latitude="[[ latitude ]]" longitude="[[ longitude ]]" api-key="AIzaSyDcP9WRK3XDMLrg9vyn9VyS2Imz_BIagxo"></google-map>
+            <google-map fit-to-markers api-key="AIzaSyBxHWJTxJ8dnpIJl9Sb-cLNiMYp7-_EA2E">
+                <google-map-marker latitude="[[ latitude ]]" longitude="[[ longitude ]]" draggable="true"></google-map-marker>
+              </google-map>
         </div>
         <div class="col-4 col-xs-8 col-md-hidden col-lg-hidden col-xl-hidden">[[address]]</div>
-        <div class$="{{_renderAmountWithColor(amount)}} col-2 col-xs-4 col-md-hidden col-lg-hidden col-xl-hidden">&euro; [[ amount ]]</div>
+        <div 
+        class$="{{_renderAmountWithColor(amount)}} col-2 col-xs-4 col-md-hidden col-lg-hidden col-xl-hidden">
+        &euro; [[ amount ]]</div>
       </div>
     </paper-item-body>
   </template>
@@ -205,6 +187,6 @@
 
     }
 
-    window.customElements.define(TranactionItem.is, TranactionItem);
+    customElements.define(TranactionItem.is, TranactionItem);
   </script>
 </dom-module>

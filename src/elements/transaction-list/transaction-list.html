@@ -1,11 +1,12 @@
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="./txn/txn-item.html">
+<link rel="import" href="../../redux-store/redux-store.html">
+<link rel="import" href="./transaction/transaction-item.html">
 <dom-module id="transaction-list">
   <template>
-
-    <iron-ajax auto url="{{ url }}" handle-as="json" last-response="{{ _transactions }}" debounce-duration="300"></iron-ajax>
+<!-- 
+    <iron-ajax auto url="{{ url }}" handle-as="json" last-response="{{ _transactions }}" debounce-duration="300"></iron-ajax> -->
 
     <style>
       :host {
@@ -13,9 +14,10 @@
       }
     </style>
     <paper-listbox attr-for-selected="selected-transaction" selected="{{selectedTransaction}}">
-      <template is="dom-repeat" items="{{_transactions}}" as="txn">
-        <txn-item selected-transaction="[[txn]]" txn-id="{{txn.id}}" name="{{txn.company}}" when="{{txn.date}}" amount="{{txn.amount}}"
-          address="{{txn.address}}" picture="{{txn.picture}}" longitude="{{txn.longitude}}" latitude="{{txn.latitude}}" show-details="{{itemIndexToShowOrHide}}"></txn-item>
+      <template is="dom-repeat" items="{{transactions}}" as="transaction">
+        <transaction-item selected-transaction="[[transaction]]" transaction-id="{{transaction.id}}" currency="[[ currency ]]" name="{{transaction.company}}"
+          when="{{transaction.date}}" amount="{{transaction.amount}}" address="{{transaction.address}}" picture="{{transaction.picture}}" longitude="{{transaction.longitude}}"
+          latitude="{{transaction.latitude}}" show-details="{{itemIndexToShowOrHide}}"></transaction-item>
       </template>
     </paper-listbox>
 
@@ -30,7 +32,7 @@
      * @polymer
      * @extends {Polymer.Element}
      */
-    class TransactionList extends Polymer.Element {
+    class TransactionList extends ReduxBehavior(Polymer.Element) {
       /**
        * String providing the tag name to register the element under.
        */
@@ -43,19 +45,16 @@
        */
       static get properties() {
         return {
-          url: {
-            type: String,
-            value: ''
+          transactions: {
+            type: Object,
+            statePath: 'transactions'
           },
-          _transactions: {
-            type: Array,
-            value: function () {
-              return [];
-            }
+          currency: {
+            type: String,
+            default: 'EUR'
           },
           itemIndexToShowOrHide: {
-            type: Number,
-            value: 0
+            type: String
           },
           selectedTransaction: {
             type: Object,
@@ -66,16 +65,20 @@
           }
         };
       }
-
-      _onSelectedItem(newItem, oldItem) {
-        if (newItem) {
-          this.dispatchEvent(new CustomEvent('transaction-item-selected', {
-            bubbles: true,
-            composed: true,
-            detail: {
-              item: newItem
+      static get actions() {
+        return {
+          setSelectedTransaction(transaction) {
+            return {
+              type: 'SELECTED_TRANSACTION',
+              transaction
             }
-          }));
+          }
+        }
+      }
+
+      _onSelectedItem(newTransaction, oldTransaction) {
+        if (newTransaction) {
+          this.dispatch('setSelectedTransaction', newTransaction);
         }
       }
 
@@ -100,7 +103,7 @@
 
         Polymer.RenderStatus.afterNextRender(this, function () {
         });
-        this.addEventListener('txn-item-collapsed-pressed', this._handleShowOrHide);
+        this.addEventListener('transaction-item-collapse-pressed', this._handleShowOrHide);
       }
     }
 

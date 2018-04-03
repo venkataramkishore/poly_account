@@ -1,0 +1,114 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../../bower_components/iron-time/iron-time.html">
+<link rel="import" href="../../../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../../../bower_components/google-map/google-map-marker.html">
+<link rel="import" href="../../../redux-store/redux-store.html">
+<link rel="import" href="../../../shared-styles.html">
+
+<dom-module id="transaction-details">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        border: 1px solid lightgrey;
+      }
+
+      google-map {
+        display: inline-block;
+        width: 100%;
+        height: 300px;
+      }
+    </style>
+    <template is="dom-if" if="{{selectedTransaction.id}}">
+      <header class="row">
+        <div class="col-1">
+          <img src="[[selectedTransaction.picture]]" alt="[[selectedTransaction.company]]">
+        </div>
+        <label class="col-4"> [[selectedTransaction.company]] </label>
+        <iron-time class="col-4" datetime="[[ selectedTransaction.when ]]" format="m/dd/yy"></iron-time>
+        <label class$="col-3 {{_renderAmountWithColor(selectedTransaction.amount)}} {{_renderCurrencyAsHTML(currency)}}">
+           [[ selectedTransaction.amount ]] </label>
+      </header>
+      <hr/>
+      <section class="row">
+       <google-map class="col-12" fit-to-markers api-key="AIzaSyBxHWJTxJ8dnpIJl9Sb-cLNiMYp7-_EA2E">
+            <google-map-marker latitude="[[ selectedTransaction.latitude ]]" longitude="[[ selectedTransaction.longitude ]]" draggable="true"></google-map-marker>
+          </google-map>
+      </section>
+      <hr/>
+      <section class="row">
+        <div class="col-12">
+          <h3>Address:</h3>
+          <div>[[selectedTransaction.address]]</div>
+          <div>Latitude: [[selectedTransaction.latitude]], Longitude: [[selectedTransaction.longitude]]</div>
+        </div>
+      </section>
+    </template>
+  </template>
+
+  <script>
+    /**
+     * `transaction-details` Description
+     *
+     * @summary ShortDescription.
+     * @customElement
+     * @polymer
+     * @extends {Polymer.Element}
+     */
+    class TransactionDetails extends ReduxBehavior(Polymer.Element) {
+      /**
+       * String providing the tag name to register the element under.
+       */
+      static get is() {
+        return 'transaction-details';
+      }
+
+      /**
+       * Object describing property-related metadata used by Polymer features
+       */
+      static get properties() {
+        return {
+          selectedTransaction: {
+            type: Object,
+            statePath: 'selectedTransaction'
+          },
+          currency: {
+            type: String,
+            value: 'EUR'
+          }
+        };
+      }
+
+      /**
+       * Instance of the element is created/upgraded. Use: initializing state,
+       * set up event listeners, create shadow dom.
+       * @constructor
+       */
+      constructor() {
+        super();
+      }
+
+      _renderAmountWithColor(amount) {
+        return amount < 0 ? 'red' : 'green';
+      }
+
+      _renderCurrencyAsHTML(currency) {
+        return currency === 'USD' ? 'dollar' : 'euro';
+      }
+
+      /**
+       * Use for one-time configuration of your component after local DOM is initialized. 
+       */
+      ready() {
+        super.ready();
+
+        Polymer.RenderStatus.afterNextRender(this, function () {
+
+        });
+      }
+
+    }
+
+    window.customElements.define(TransactionDetails.is, TransactionDetails);
+  </script>
+</dom-module>

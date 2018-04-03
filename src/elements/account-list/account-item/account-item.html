@@ -10,18 +10,19 @@
         display: block;
         border: 1px solid grey;
       }
-     
-      paper-item, paper-item-body {
+
+      paper-item,
+      paper-item-body {
         padding: 5px;
         flex-direction: row;
         justify-content: space-between;
       }
     </style>
-    <paper-item role="menuitem" >
+    <paper-item role="menuitem">
       <paper-item-body>
         <div>
-            <div>[[ iban ]]</div>
-            <div>[[ name ]]</div>
+          <div>[[ iban ]]</div>
+          <div>[[ name ]]</div>
         </div>
         <span class$="{{_amountColor}} {{_showCurrency}}"> [[ amount ]]</span>
       </paper-item-body>
@@ -87,9 +88,9 @@
           /**
            * Description for jointAccount
            */
-           jointAccount: {
+          jointAccount: {
             type: Array,
-            value: function() {
+            value: function () {
               return []
             },
             observer: '_handleJointAccountNames'
@@ -106,28 +107,22 @@
       }
 
       _renderCurrencyAsHTML(newCcy, oldCCy) {
-        if (newCcy === 'USD') {
-          this.set('_showCurrency', 'dollar');
-        } else {
-          this.set('_showCurrency', 'euro');
-        }
+        this.set('_showCurrency', newCcy === 'USD' ? 'dollar' : 'euro');
       }
 
       _renderAmountWithColor(newAmount, oldAmount) {
-        if (newAmount < 0) {
-          return this.set('_amountColor', 'red');
-        }
-        this.set('_amountColor', 'green');
+        this.set('_amountColor', newAmount < 0 ? 'red' : 'green');
       }
 
-    _handleJointAccountNames(newAccounts, oldAccounts) {
-      if(Array.isArray(newAccounts) && newAccounts.length > 0 ) {
-        const names = newAccounts.reduce(function(previousValue, currentValue){
-          return currentValue.name;
-        }, '');
-        this.set('name', this.name + '('+ names+')');
+      _handleJointAccountNames(newAccounts, oldAccounts) {
+        if (Array.isArray(newAccounts) && newAccounts.length > 0) {
+          const names = newAccounts.reduce(function (previousValue, currentValue) {
+            return currentValue.name;
+          }, '');
+          this.set('name', this.name + '(' + names + ')');
+        }
       }
-    }
+      
       /**
        * Instance of the element is created/upgraded. Use: initializing state,
        * set up event listeners, create shadow dom.
@@ -135,18 +130,6 @@
        */
       constructor() {
         super();
-      }
-
-      /**
-       * Use for one-time configuration of your component after local DOM is initialized. 
-       */
-      ready() {
-        super.ready();
-
-        Polymer.RenderStatus.afterNextRender(this, function () {
-
-        });
-        // this.$.acctItem.addEventListener('click', this._handleAccountSelection);
       }
 
     }

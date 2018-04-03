@@ -5,7 +5,7 @@
 <link rel="import" href="../../../../bower_components/google-map/google-map.html">
 <link rel="import" href="../../../shared-styles.html">
 
-<dom-module id="txn-item">
+<dom-module id="transaction-item">
   <template>
     <style include="shared-styles">
       :host {
@@ -22,42 +22,36 @@
         height: 100px;
       }
     </style>
-    <paper-item on-click="_handleTxnSelection">
-      <div class="row">
+    <paper-item on-click="_handleTransactionSelection">
+      <header class="row">
         <div class="col-2 col-xs-2">
           <img src="[[picture]]" alt="[[name]]">
         </div>
-        <div class="col-4 col-xs-3">[[name]]</div>
-        <div class="col-4 col-xs-3">
-          <iron-time datetime="[[ when ]]" format="m/dd/yy"></iron-time>
-        </div>
-        <div class="col-3 col-xs-1">
-          <template is="dom-if" if="{{_showAmount}}">
-            <div class$="{{_renderAmountWithColor(amount)}}">&euro; [[ amount ]]</div>
-          </template>
-        </div>
-      </div>
+        <label class="col-4 col-xs-3">[[name]]</label>
+        <iron-time class="col-4 col-xs-3" datetime="[[ when ]]" format="m/dd/yy"></iron-time>
+        <template is="dom-if" if="{{_showAmount}}">
+          <div class$="{{_renderAmountWithColor(amount)}} col-3 col-xs-1 {{_renderCurrencyAsHTML(currency)}}"> [[ amount ]] </div>
+        </template>
+      </header>
     </paper-item>
     <paper-item-body class$="{{_showOrHide}}">
-      <div class="row">
-        <div class="col-6 col-xs-12 col-md-hidden col-lg-hidden col-xl-hidden">
-            <google-map fit-to-markers api-key="AIzaSyBxHWJTxJ8dnpIJl9Sb-cLNiMYp7-_EA2E">
-                <google-map-marker latitude="[[ latitude ]]" longitude="[[ longitude ]]" draggable="true"></google-map-marker>
-              </google-map>
-        </div>
-        <div class="col-4 col-xs-8 col-md-hidden col-lg-hidden col-xl-hidden">[[address]]</div>
-        <div 
-        class$="{{_renderAmountWithColor(amount)}} col-2 col-xs-4 col-md-hidden col-lg-hidden col-xl-hidden">
-        &euro; [[ amount ]]</div>
-      </div>
+      <section class="row">
+          <google-map class="col-6 col-xs-12 col-md-hidden col-lg-hidden col-xl-hidden" 
+          fit-to-markers api-key="AIzaSyBxHWJTxJ8dnpIJl9Sb-cLNiMYp7-_EA2E">
+            <google-map-marker latitude="[[ latitude ]]" longitude="[[ longitude ]]" draggable="true"></google-map-marker>
+          </google-map>
+        <label class="col-4 col-xs-12 col-md-hidden col-lg-hidden col-xl-hidden">[[address]]</label>
+        <label class$="{{_renderAmountWithColor(amount)}} {{_renderCurrencyAsHTML(currency)}} col-2 col-xs-12 col-md-hidden col-lg-hidden col-xl-hidden">
+           [[ amount ]] </label>
+        </section>
     </paper-item-body>
   </template>
 
   <script>
     /**
-     * `txn-item` Description
+     * `transaction-item` Description
      *
-     * @summary ShortDescription.
+     * @summary show transaction item.
      * @customElement
      * @polymer
      * @extends {Polymer.Element}
@@ -67,7 +61,7 @@
        * String providing the tag name to register the element under.
        */
       static get is() {
-        return 'txn-item';
+        return 'transaction-item';
       }
 
       /**
@@ -75,15 +69,21 @@
        */
       static get properties() {
         return {
-          txnId: {
+          /**
+           * id of transaction
+           */
+          transactionId: {
             type: String
           },
+          /**
+           * Benificiary name of the transaction
+           */
           name: {
             type: String,
             value: ''
           },
           /**
-             * "when" txn happened
+             * "when" transaction happened
              */
           when: {
             type: Date,
@@ -143,6 +143,13 @@
             type: Boolean,
             value: true
           },
+          /**
+           * Description for prop
+           */
+          currency: {
+            type: String,
+            value: 'EUR'
+          }
         };
       }
 
@@ -155,12 +162,16 @@
         super();
       }
 
-      _handleTxnSelection(event) {
-        this.dispatchEvent(new CustomEvent('txn-item-collapsed-pressed', {
+      _renderCurrencyAsHTML(currency) {
+        return currency === 'USD' ? 'dollar' : 'euro';
+      }
+
+      _handleTransactionSelection(event) {
+        this.dispatchEvent(new CustomEvent('transaction-item-collapse-pressed', {
           bubbles: true,
           composed: true,
           detail: {
-            id: this.txnId
+            id: this.transactionId
           }
         }));
       }
@@ -170,8 +181,8 @@
       }
 
       _updateShowOrHide(newValue, oldValue) {
-        this.set('_showOrHide', newValue === this.txnId ? 'show' : 'hide');
-        this.set('_showAmount', !(newValue === this.txnId));
+        this.set('_showOrHide', newValue === this.transactionId ? 'show' : 'hide');
+        this.set('_showAmount', !(newValue === this.transactionId));
       }
 
       /**

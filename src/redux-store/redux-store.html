@@ -1,0 +1,55 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer-redux/polymer-redux.html">
+<script>
+  // Setup a Redux store
+  const initial = {
+    accounts: [],
+    transactions: [],
+    selectedAccount: null,
+    selectedTransaction: null
+  };
+
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case 'FETCH_ACCOUNTS':
+        // ALWAYS return new state
+        return Object.assign({}, state, {
+          accounts: action.accounts
+        });
+      case 'UPDATE_ACCOUNTS':
+        state.accounts = [];
+        return Object.assign({}, state, {
+          accounts: action.accounts
+        });
+      case 'FETCH_TRANSACTIONS':
+        // ALWAYS return new state
+        return Object.assign({}, state, {
+          transactions: action.transactions
+        });
+      case 'UPDATE_TRANSACTIONS':
+        state.transactions = [];
+        return Object.assign({}, state, {
+          transactions: action.transactions
+        });
+      case 'SELECTED_ACCOUNT':
+        // ALWAYS return new state
+        return Object.assign({}, state, {
+          selectedAccount: action.accountId
+        });
+      case 'SELECTED_TRANSACTION':
+        // ALWAYS return new state
+        console.log(action);
+        
+        return Object.assign({}, state, {
+          selectedTransaction: action.transaction
+        });
+      // Return the state, nothing changed.
+      default:
+        return state;
+    }
+  };
+  const store = Redux.createStore(reducer, initial);
+
+  // Export the ReduxMixin
+  const ReduxBehavior = PolymerRedux(store);
+</script>

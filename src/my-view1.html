@@ -12,10 +12,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../bower_components/neon-animation/web-animations.html">
+<link rel="import" href="./redux-store/redux-store.html">
 <link rel="import" href="./elements/transaction-list/transaction-list.html">
 <link rel="import" href="./elements/account-list/account-list.html">
-<link rel="import" href="./elements/transaction-list/txn-details/txn-details.html">
+<link rel="import" href="./elements/transaction-list/transaction-details/transaction-details.html">
 <link rel="import" href="shared-styles.html">
+
 
 <dom-module id="my-view1">
   <template>
@@ -23,34 +25,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <style include="shared-styles">
       :host {
         display: block;
-
         padding: 10px;
       }
-      transaction-list, txn-details {
+
+      transaction-list,
+      transaction-details {
         padding: 5px;
         box-sizing: border-box;
         width: 100%;
         height: 100%;
       }
     </style>
-
+    <iron-ajax id="transactionsReq" url="{{ _transactionUrl }}" handle-as="json" on-response="_handleTransactionsResponse"></iron-ajax>
+    <iron-ajax id="accountsReq" url="https://api.myjson.com/bins/uoze3" handle-as="json" on-response="_handleAccountsResponse"></iron-ajax>
     <div class="card">
       <h1>Select Account:</h1>
-      <account-list url="https://api.myjson.com/bins/uoze3"></account-list>
+      <account-list></account-list>
     </div>
     <div class="card">
       <div class="row">
         <div class="col-6 col-xs-12">
-            <transaction-list url="{{ _transactionListUrl }}"></transaction-list>
+          <transaction-list currency="USD"></transaction-list>
         </div>
         <div class="col-6 col-xs-hidden">
-          <txn-details 
-            txn-id="{{selectedTxn.id}}"
-            name="{{selectedTxn.company}}" when="{{selectedTxn.date}}" amount="{{selectedTxn.amount}}" 
-            address="{{selectedTxn.address}}"
-            picture="{{selectedTxn.picture}}"
-            longitude="{{selectedTxn.longitude}}"
-            latitude="{{selectedTxn.latitude}}"></txn-details>
+          <!-- <transaction-details transaction-id="{{selectedTransaction.id}}" name="{{selectedTransaction.company}}" when="{{selectedTransaction.date}}"
+            amount="{{selectedTransaction.amount}}" address="{{selectedTransaction.address}}" picture="{{selectedTransaction.picture}}"
+            longitude="{{selectedTransaction.longitude}}" latitude="{{selectedTransaction.latitude}}"></transaction-details> -->
+            <transaction-details currency="USD"></transaction-details>
         </div>
       </div>
     </div>
@@ -58,38 +59,69 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
-    class MyView1 extends Polymer.Element {
+    class MyView1 extends ReduxBehavior(Polymer.Element) {
       static get is() { return 'my-view1'; }
       /**
         * Object describing property-related metadata used by Polymer features
         */
       static get properties() {
         return {
-          accounts: {
-            type: Object,
-            value: function () {
-              return [];
-            }
-          },
-          _transactionListUrl: {
+          _transactionUrl: {
             type: String
           },
-          selectedTxn: {
-            type: Object,
-            value :  function () {
-              return {};
-            }
+          selectedAccount: {
+            type: String,
+            statePath: 'selectedAccount',
+            observer: '__handleSelectedAccount'
+          },
+          _showOrHideDetails: {
+            type: Boolean,
+            value: true
           }
         };
       }
 
-
-      _handleAccountSelection(event) {
-        this.set('_transactionListUrl', `https://api.myjson.com/bins/${event.detail.accountId}`);
+      static get actions() {
+        return {
+          updateAccounts(accounts) {
+            return {
+              type: 'UPDATE_ACCOUNTS',
+              accounts
+            };
+          },
+          updateTransactions(transactions) {
+            return {
+              type: 'UPDATE_TRANSACTIONS',
+              transactions
+            };
+          }
+        };
       }
 
-      _handleSelectedTransaction(event) {
-        this.set('selectedTxn', event.detail.item);
+      /**
+        * Called every time the element is inserted into the DOM. Useful for 
+        * running setup code, such as fetching resources or rendering.
+        * Generally, you should try to delay work until this time.
+        */
+      connectedCallback() {
+        super.connectedCallback();
+        this.$.accountsReq.generateRequest();
+      }
+
+      __handleSelectedAccount(newAccountId, oldAccountId) {
+        if (newAccountId) {
+          this.set('_transactionUrl', `https://api.myjson.com/bins/${newAccountId}`);
+          this.$.transactionsReq.generateRequest();
+        }
+      }
+
+      _handleTransactionsResponse(event) {
+        this.dispatch('updateTransactions', event.detail.response);
+        // this.dispatchEvent('updateTransactions', event.detail.response);
+      }
+
+      _handleAccountsResponse(event) {
+        this.dispatch('updateAccounts', event.detail.response);
       }
 
       /**
@@ -98,14 +130,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
       ready() {
         super.ready();
-
-        // When possible, use afterNextRender to defer non-critical
-        // work until after first paint.
-        Polymer.RenderStatus.afterNextRender(this, function () {
-
-        });
-        this.addEventListener('account-item-selected', this._handleAccountSelection);
-        this.addEventListener('transaction-item-selected', this._handleSelectedTransaction);
+        // this.addEventListener('account-item-selected', this._handleAccountSelection);
+        // this.addEventListener('transaction-item-selected', this._handleSelectedTransaction);
       }
     }
 

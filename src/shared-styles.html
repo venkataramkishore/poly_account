@@ -14,6 +14,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="shared-styles">
   <template>
     <style>
+     
+      h1 {
+        font-size: 2vw;
+      }
+
+      h2 {
+        font-size: 1.8vw;
+      }
+
+      h3 {
+        font-size: 1.5vw;
+      }
+
       .row {
         display: -webkit-box;
         display: -webkit-flex;
@@ -94,6 +107,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       @media only screen and (max-device-width: 480px) {
+       
+        h1 {
+          font-size: 4vw;
+        }
+        h2 {
+          font-size: 3.8vw;
+        }
+        h3 {
+          font-size: 3.5vw;
+        }
+
         .row {
           -webkit-box-direction: column;
           -ms-flex-direction: column;
@@ -150,17 +174,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       }
 
-      @media only screen and 
-      (min-device-width: 481px) and 
-      (max-device-width: 768px) {
-        .col-md-hidden{
+      @media only screen and (min-device-width: 481px) and (max-device-width: 768px) {
+        .col-md-hidden {
           display: none;
         }
       }
 
-      @media only screen and 
-      (min-device-width: 769px) and
-      (max-device-width: 1024px) {
+      @media only screen and (min-device-width: 769px) and (max-device-width: 1024px) {
         .col-lg-hidden {
           display: none;
         }
